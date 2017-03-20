@@ -1,10 +1,13 @@
 #include <ros/ros.h>
 
+#include <iostream>
+
 #include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
 
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
 
 
 class RealsenseImgParser
@@ -29,6 +32,8 @@ public:
             return;
         }
         
+        cv::cvtColor(cv_ptr->image, cv_ptr->image, CV_BGR2RGB);
+        
         cv::imshow("color", cv_ptr->image);
     }
     
@@ -42,8 +47,10 @@ public:
             return;
         }
         
-        cv::imshow("depth", cv_ptr->image);
-        cv::waitKey(15);
+        cv::Mat depth_img = cv_ptr->image; //CV_16UC1, 480*360
+                
+        cv::imshow("depth", depth_img);
+        cv::waitKey(33);
     }
 
 
