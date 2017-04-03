@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
   message_generation
+  geometry_msgs
 )
 FIND_PACKAGE( OpenCV REQUIRED )
 
@@ -145,8 +146,14 @@ MESSAGE(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 
 add_subdirectory(src)
 
-add_executable(asms_demo main_demo.cpp )
-target_link_libraries(asms_demo 
+add_executable(trackSheepPos main.cpp )
+target_link_libraries(trackSheepPos 
+	${catkin_LIBRARIES}
+	${OpenCV_LIBS} color )
+
+
+add_executable(getSheepPos src/getSheepPos.cpp )
+target_link_libraries(getSheepPos 
 	${catkin_LIBRARIES}
 	${OpenCV_LIBS} color )
 
