@@ -1,10 +1,22 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(iarc_recog_track)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+project(iarc_recog_track)
+  
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
+if(CMAKE_COMPILER_IS_GNUCXX)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wextra -pedantic -Wno-long-long")
+endif()
+
+find_package(catkin REQUIRED COMPONENTS
+  image_transport
+  cv_bridge
+  sensor_msgs
+  roscpp
+  rospy
+  tf
+  message_generation
+)
+FIND_PACKAGE( OpenCV REQUIRED )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -96,10 +108,10 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES iarc_recog_track
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES iarc_realsense
+  CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation
+  DEPENDS system_lib boost opencv
 )
 
 ###########
@@ -114,6 +126,29 @@ catkin_package(
 # add_library(iarc_recog_track
 #   src/${PROJECT_NAME}/iarc_recog_track.cpp
 # )
+
+
+
+link_directories ( 
+	${OpenCV_LIB_DIR}
+ )
+MESSAGE(STATUS "OpenCV_LIB_DIR: ${OpenCV_LIB_DIR}")
+
+include_directories ( 
+    ${OpenCV_INCLUDE_DIRS} 
+    ${catkin_INCLUDE_DIRS}
+    include
+    src
+)
+MESSAGE(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
+
+
+add_subdirectory(src)
+
+add_executable(asms_demo main_demo.cpp )
+target_link_libraries(asms_demo 
+	${catkin_LIBRARIES}
+	${OpenCV_LIBS} color )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
