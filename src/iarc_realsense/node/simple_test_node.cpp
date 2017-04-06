@@ -70,6 +70,5 @@ int main(int argc, char **argv)
     RealsenseImgParser rip(n);
     
     ros::spin();
-
     return 0;
 }
