@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find realsense_camera)/launch/r200_nodelet_default.launch"/>
+    <node pkg="tf" type="static_transform_publisher" name="realsense_broadcaster" args="0.0 0.0 0.0 0.0 0.0 0.0 map camera_link 100" />
+    <node pkg="iarc_realsense" type="simple_test_node" name="simple_test_node" output="screen" />
+</launch>
