@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>iarc_recog_track</name>
+  <name>iarc_realsense</name>
   <version>0.0.0</version>
-  <description>The iarc_recog_track package</description>
+  <description>The iarc_realsense package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
-  <maintainer email="sjzwf501@126.com">sjz</maintainer>
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="dy@todo.todo">dy</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -15,14 +16,14 @@
   <license>TODO</license>
 
 
-  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
+  <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/iarc_recog_track</url> -->
+  <!-- <url type="website">http://wiki.ros.org/iarc_realsense</url> -->
 
 
-  <!-- Author tags are optional, mutiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintianers, but could be -->
+  <!-- Author tags are optional, multiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintainers, but could be -->
   <!-- Example: -->
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
@@ -39,8 +40,6 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>opencv2</build_depend>
-  
   <build_depend>image_transport</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>sensor_msgs</build_depend>
@@ -48,9 +47,9 @@
   <build_depend>roscpp</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>message_generation</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  
-  <run_depend>opencv2</run_depend>
+  <build_depend>libpcl-all-dev</build_depend> 
+
+  <run_depend>libpcl-all</run_depend>
   <run_depend>message_generation</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>rospy</run_depend>
@@ -58,7 +57,6 @@
   <run_depend>cv_bridge</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>tf</run_depend>
-  <run_depend>geometry_msgs</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

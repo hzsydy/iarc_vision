@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
+project(iarc_realsense)
 
-project(iarc_recog_track)
-  
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
-if(CMAKE_COMPILER_IS_GNUCXX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wextra -pedantic -Wno-long-long")
-endif()
+## Add support for C++11, supported in ROS Kinetic and newer
+# add_definitions(-std=c++11)
 
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
+
+FIND_PACKAGE(OpenCV REQUIRED)
+find_package(PCL 1.7 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   image_transport
   cv_bridge
@@ -15,9 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
   message_generation
-  geometry_msgs
 )
-FIND_PACKAGE( OpenCV REQUIRED )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -74,10 +75,10 @@ FIND_PACKAGE( OpenCV REQUIRED )
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -112,7 +113,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES iarc_realsense
   CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation
-  DEPENDS system_lib boost opencv
+  DEPENDS system_lib boost opencv pcl
 )
 
 ###########
@@ -122,57 +123,66 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+  include
+)
+
+LINK_DIRECTORIES(
+  ${PCL_LIBRARY_DIRS}
+)
+
+ADD_DEFINITIONS(
+  ${PCL_DEFINITIONS}
+)
 
 ## Declare a C++ library
-# add_library(iarc_recog_track
-#   src/${PROJECT_NAME}/iarc_recog_track.cpp
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/iarc_realsense.cpp
 # )
-
-
-
-link_directories ( 
-	${OpenCV_LIB_DIR}
- )
-MESSAGE(STATUS "OpenCV_LIB_DIR: ${OpenCV_LIB_DIR}")
-
-include_directories ( 
-    ${OpenCV_INCLUDE_DIRS} 
-    ${catkin_INCLUDE_DIRS}
-    include
-    src
+SET(SRC_FILE
+    
 )
-MESSAGE(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
-
-
-add_subdirectory(src)
-
-add_executable(trackSheepPos main.cpp )
-target_link_libraries(trackSheepPos 
-	${catkin_LIBRARIES}
-	${OpenCV_LIBS} color )
-
-
-add_executable(getSheepPos src/getSheepPos.cpp )
-target_link_libraries(getSheepPos 
-	${catkin_LIBRARIES}
-	${OpenCV_LIBS} color )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(iarc_recog_track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(iarc_recog_track_node src/iarc_recog_track_node.cpp)
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/iarc_realsense_node.cpp)
+add_executable(simple_test_node ./node/simple_test_node.cpp ${SRC_FILE})
+add_executable(pclsub_node ./node/pclsub.cpp ${SRC_FILE})
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(iarc_recog_track_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(iarc_recog_track_node
+# target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(simple_test_node
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBS}
+)
+
+target_link_libraries(pclsub_node
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBS}
+    ${PCL_LIBRARIES}
+)
+
 
 #############
 ## Install ##
@@ -189,7 +199,7 @@ target_link_libraries(getSheepPos
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS iarc_recog_track iarc_recog_track_node
+# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -214,7 +224,7 @@ target_link_libraries(getSheepPos
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_iarc_recog_track.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_iarc_realsense.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
