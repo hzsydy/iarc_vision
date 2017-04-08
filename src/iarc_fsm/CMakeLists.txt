@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(iarc_FSM)
+project(iarc_fsm)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
@@ -141,8 +141,8 @@ SET(SRC_FILE)
 
 add_subdirectory(src)
 
-add_executable(FSM_node main.cpp)
-target_link_libraries(FSM_node ${catkin_LIBRARIES} FSM)
+add_executable(main_logic main.cpp)
+target_link_libraries(main_logic ${catkin_LIBRARIES} FSM)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

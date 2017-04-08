@@ -1,8 +1,7 @@
 #include "colotracker.h"
 #include <iostream>
 #include <fstream>
-
-using std::isinf;
+    
 
 void ColorTracker::init(cv::Mat & img, int x1, int y1, int x2, int y2)
 {

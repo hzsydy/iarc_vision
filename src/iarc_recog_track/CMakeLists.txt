@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 project(iarc_recog_track)
-  
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
-if(CMAKE_COMPILER_IS_GNUCXX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wextra -pedantic -Wno-long-long")
-endif()
 
 find_package(catkin REQUIRED COMPONENTS
   image_transport
@@ -128,34 +123,34 @@ catkin_package(
 #   src/${PROJECT_NAME}/iarc_recog_track.cpp
 # )
 
-
-
 link_directories ( 
 	${OpenCV_LIB_DIR}
  )
-MESSAGE(STATUS "OpenCV_LIB_DIR: ${OpenCV_LIB_DIR}")
 
 include_directories ( 
     ${OpenCV_INCLUDE_DIRS} 
     ${catkin_INCLUDE_DIRS}
     include
-    src
 )
-MESSAGE(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 
+SET(SRC_FILE
+    src/colotracker.cpp 
+    src/histogram.cpp 
+    src/region.cpp
+)
 
-add_subdirectory(src)
-
-add_executable(trackSheepPos main.cpp )
+add_executable(trackSheepPos nodes/trackSheepPos.cpp ${SRC_FILE})
 target_link_libraries(trackSheepPos 
 	${catkin_LIBRARIES}
-	${OpenCV_LIBS} color )
+	${OpenCV_LIBS}
+	)
 
 
-add_executable(getSheepPos src/getSheepPos.cpp )
+add_executable(getSheepPos nodes/getSheepPos.cpp ${SRC_FILE})
 target_link_libraries(getSheepPos 
 	${catkin_LIBRARIES}
-	${OpenCV_LIBS} color )
+	${OpenCV_LIBS} 
+	)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

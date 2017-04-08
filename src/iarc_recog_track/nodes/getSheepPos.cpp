@@ -65,7 +65,7 @@ cv::Point* MTemplate(Mat src) {
 	else {  
 	matchLoc = maxLoc;   
 	} 
-	cv::Point Point_List[2];
+	static cv::Point Point_List[2];
 	Point_List[0] = cv::Point( matchLoc.x, matchLoc.y);
 	Point_List[1] = cv::Point( matchLoc.x + templ.cols, matchLoc.y + templ.rows );
 	return(Point_List);
