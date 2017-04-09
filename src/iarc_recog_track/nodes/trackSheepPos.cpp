@@ -20,6 +20,7 @@ cv::Point g_topLeft(0,0);
 cv::Point g_botRight(0,0);
 cv::Point g_botRight_tmp(0,0);
 cv::Mat img;
+cv::Mat img_k;
 bool plot = false;
 bool g_trackerInitialized = false;
 ColorTracker * g_tracker = NULL;
@@ -81,8 +82,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image) {
         exit(-1);    
     } 
     ROS_INFO("Get Next Picture.");  
-    img = cv_bridge::toCvShare(original_image, "bgr8")->image;
-
+    cv::Mat tmp = cv_bridge::toCvShare(original_image, "bgr8")->image;
+    if (tmp.rows == 0 || tmp.cols == 0) return;
+    img = tmp;
 } 
 
 
@@ -90,11 +92,14 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "trackSheepPos");
     ros::NodeHandle nn;
+    image_transport::ImageTransport it(nn); 
     ros::Publisher chatter_pub = nn.advertise<geometry_msgs::Point>("/iarc/sheep/center",20);
+    image_transport::Publisher img_pub = it.advertise("/iarc/sheep/timg",1);
+    
     BBox *bb = NULL;
     
-    /*
-    int captureDevice = 0;
+    
+    /*int captureDevice = 0;
     if (argc > 1)
         captureDevice = atoi(argv[1]);
 
@@ -105,21 +110,22 @@ int main(int argc, char **argv)
         webcam.release();
         std::cerr << "Error during opening capture device!" << std::endl;
         return 1;
-    }
+    }*/
 
     cv::namedWindow( "output", 0 );
     cv::setMouseCallback( "output", onMouse, &img);
-    */
+    img = cv::Mat(640,480,CV_8UC3,cv::Scalar(0,0,0));
     
-    ros::Subscriber sub1 = nn.subscribe("geometry_msgs/Point_lefttop", 20, pointCallback1);
-    ros::Subscriber sub2 = nn.subscribe("geometry_msgs/Point_rightbottom", 20, pointCallback2);
-    image_transport::ImageTransport it(nn); 
-    image_transport::Subscriber subI = it.subscribe("colorimage", 1, imageCallback);
     
+    ros::Subscriber sub1 = nn.subscribe("Point_lefttop", 1, pointCallback1);
+    ros::Subscriber sub2 = nn.subscribe("Point_rightbottom", 1, pointCallback2);
+    image_transport::Subscriber subI = it.subscribe("fuck", 1, imageCallback);
+            
     ros::Rate loop_rate(10);
-   
     for(;;){
-
+        //webcam >>img;
+        
+            
         int c = waitKey(10);
         if( (c & 255) == 27 ) {
             std::cout << "Exiting ..." << std::endl;
@@ -135,17 +141,16 @@ int main(int argc, char **argv)
         default:;
 
         }
-
+        if (img.rows == 0 || img.cols == 0) continue; 
         if (g_trackerInitialized && g_tracker != NULL){
-            bb = g_tracker->track(img);
+            img_k = img.clone();
+            bb = g_tracker->track(img_k);
         }
-
         if (!g_trackerInitialized && plot && g_botRight_tmp.x > 0){
             cv::rectangle(img, g_topLeft, g_botRight_tmp, cv::Scalar(0,255,0), 2);
         }
-
         if (bb != NULL){
-            cv::rectangle(img, Point2i(bb->x, bb->y), Point2i(bb->x + bb->width, bb->y + bb->height), Scalar(255, 0, 0), 3);
+            cv::rectangle(img_k, Point2i(bb->x, bb->y), Point2i(bb->x + bb->width, bb->y + bb->height), Scalar(255, 0, 0), 3);
             if (ros::ok())
             {
                 geometry_msgs::Point pt;
@@ -153,20 +158,23 @@ int main(int argc, char **argv)
                 pt.y=bb->y+bb->height/2;
                 ROS_INFO("%lf %lf", pt.x,pt.y);
                 chatter_pub.publish(pt);
-                ros::spinOnce();
+                sensor_msgs::ImagePtr imgmsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img_k).toImageMsg();
+                img_pub.publish(imgmsg);
+                //ros::spinOnce();
                 loop_rate.sleep();
             }
             
-            //cv::rectangle(img, Point2i(bb->x-5, bb->y-5), Point2i(bb->x + bb->width+5, bb->y + bb->height+5), Scalar(0, 0, 255), 1);
             delete bb;
             bb = NULL;
         }
-
-        cv::imshow("output", img);
+        ros::spinOnce();
+        if (!(img_k.rows == 0||img_k.cols == 0))
+            cv::imshow("output", img_k);
 
     }
 
     if (g_tracker != NULL)
         delete g_tracker;
+    //ros::spin();
     return 0;
 }
