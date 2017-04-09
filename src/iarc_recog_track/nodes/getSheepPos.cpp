@@ -20,10 +20,14 @@ using namespace cv;
 using namespace std;    
 namespace enc = sensor_msgs::image_encodings;    
 
-static string ImgInfo = "~/Upan.png";
+static string ImgInfo = "/home/sjz/catkin_ws/iarc/iarc_vision/src/iarc_recog_track/resource/template.jpg";
 cv::Point *PointList;
+double x1;
+double yy1;
+double x2;
+double y2;
 
-cv::Point* MTemplate(Mat src);  
+void MTemplate(Mat src);  
 void imageCallback(const sensor_msgs::ImageConstPtr& original_image) {    
 	cv_bridge::CvImagePtr cv_ptr;    
 	try{
@@ -34,15 +38,15 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image) {
 		exit(-1);    
 	} 
 	ROS_INFO("Next step MTemplate");  
-	PointList = MTemplate(cv_bridge::toCvShare(original_image, "bgr8")->image);
+	MTemplate(cv_bridge::toCvShare(original_image, "bgr8")->image);
 
 }    
 
-cv::Point* MTemplate(Mat src) {  
+void MTemplate(Mat src) {  
 	Mat templ;      
 	Mat result;    
-	int match_method = 0;    
-	templ = imread(ImgInfo,1);   
+	int match_method = 0;
+	templ = imread(ImgInfo,1);
 	int result_cols = src.cols - templ.cols + 1;    
 	int result_rows = src.rows - templ.rows + 1; 
 	ROS_INFO("%d %d",templ.cols,templ.rows);   
@@ -63,12 +67,12 @@ cv::Point* MTemplate(Mat src) {
 		matchLoc = minLoc;   
 	}    
 	else {  
-	matchLoc = maxLoc;   
+		matchLoc = maxLoc;   
 	} 
-	static cv::Point Point_List[2];
-	Point_List[0] = cv::Point( matchLoc.x, matchLoc.y);
-	Point_List[1] = cv::Point( matchLoc.x + templ.cols, matchLoc.y + templ.rows );
-	return(Point_List);
+	x1 = double(matchLoc.x);
+	yy1 = double(matchLoc.y);
+	x2 = double(matchLoc.x + templ.cols);
+	y2 = double(matchLoc.y + templ.rows);
 }  
 
 int main(int argc, char **argv) {    
@@ -79,21 +83,41 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;    
 	image_transport::ImageTransport it(nh);    
 
-	image_transport::Subscriber sub = it.subscribe("colorimage", 1, imageCallback);
-	ros::Publisher pub_lefttop = nh.advertise<geometry_msgs::Point>("geometry_msgs/Point_lefttop", 1000);
-	ros::Publisher pub_rightbottom = nh.advertise<geometry_msgs::Point>("geometry_msgs/Point_rightbottom", 1000);
+	//image_transport::Subscriber sub = it.subscribe("camera/img", 1, imageCallback);
+	ros::Publisher pub_lefttop = nh.advertise<geometry_msgs::Point>("Point_lefttop", 1);
+	ros::Publisher pub_rightbottom = nh.advertise<geometry_msgs::Point>("Point_rightbottom", 1);
+	image_transport::Publisher pub_img = it.advertise("fuck", 1);
+
 	ros::Rate loop_rate(10);
+	
+	int captureDevice = 0;
+    if (argc > 1)
+        captureDevice = atoi(argv[1]);
+    cv::VideoCapture webcam = cv::VideoCapture(captureDevice);
+    webcam.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+    webcam.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    cv::Mat img;
+    if (!webcam.isOpened()){
+        webcam.release();
+        std::cerr << "Error during opening capture device!" << std::endl;
+        return 1;
+	}
 	while ( ros::ok() ){
+		webcam >> img;
+		sensor_msgs::ImagePtr Imsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg();
+		MTemplate(img);
 		geometry_msgs::Point lefttop;
-		lefttop.x = PointList[0].x;
-		lefttop.y = PointList[0].y;
+		lefttop.x = x1;
+		lefttop.y = yy1;
 		lefttop.z = 1.0;
 		geometry_msgs::Point rightbottom;
-		rightbottom.x = PointList[0].x;
-		rightbottom.y = PointList[0].y;
+		rightbottom.x = x2;
+		rightbottom.y = y2;
 		rightbottom.z = 1.0;
 		pub_lefttop.publish(lefttop);
-		pub_lefttop.publish(rightbottom);
+		pub_rightbottom.publish(rightbottom);
+		ROS_INFO("%lf %lf %lf %lf\n%lf %lf %lf %lf",x1,yy1,x2,y2,lefttop.x,lefttop.y,rightbottom.x,rightbottom.y);
+		pub_img.publish(Imsg);
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
