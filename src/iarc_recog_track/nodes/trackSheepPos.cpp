@@ -91,8 +91,9 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "trackSheepPos");
     ros::NodeHandle nn;
     ros::Publisher chatter_pub = nn.advertise<geometry_msgs::Point>("/iarc/sheep/center",20);
-     BBox * bb = NULL;
+    BBox *bb = NULL;
     
+    /*
     int captureDevice = 0;
     if (argc > 1)
         captureDevice = atoi(argv[1]);
@@ -108,18 +109,16 @@ int main(int argc, char **argv)
 
     cv::namedWindow( "output", 0 );
     cv::setMouseCallback( "output", onMouse, &img);
-
+    */
+    
     ros::Subscriber sub1 = nn.subscribe("geometry_msgs/Point_lefttop", 20, pointCallback1);
     ros::Subscriber sub2 = nn.subscribe("geometry_msgs/Point_rightbottom", 20, pointCallback2);
     image_transport::ImageTransport it(nn); 
-    image_transport::Subscriber subI = it.subscribe("sensor_msgs/Image", 1, imageCallback);
+    image_transport::Subscriber subI = it.subscribe("colorimage", 1, imageCallback);
     
     ros::Rate loop_rate(10);
    
     for(;;){
-        
-
-        webcam >> img; 
 
         int c = waitKey(10);
         if( (c & 255) == 27 ) {

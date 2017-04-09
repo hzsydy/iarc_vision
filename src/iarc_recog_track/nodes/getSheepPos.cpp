@@ -20,7 +20,7 @@ using namespace cv;
 using namespace std;    
 namespace enc = sensor_msgs::image_encodings;    
 
-static string ImgInfo = NULL;
+static string ImgInfo = "~/Upan.png";
 cv::Point *PointList;
 
 cv::Point* MTemplate(Mat src);  
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;    
 	image_transport::ImageTransport it(nh);    
 
-	image_transport::Subscriber sub = it.subscribe("sensor_msgs/Image", 1, imageCallback);
+	image_transport::Subscriber sub = it.subscribe("colorimage", 1, imageCallback);
 	ros::Publisher pub_lefttop = nh.advertise<geometry_msgs::Point>("geometry_msgs/Point_lefttop", 1000);
 	ros::Publisher pub_rightbottom = nh.advertise<geometry_msgs::Point>("geometry_msgs/Point_rightbottom", 1000);
 	ros::Rate loop_rate(10);
@@ -97,6 +97,5 @@ int main(int argc, char **argv) {
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-	ROS_INFO("tutorialROSOpenCV::main.cpp::No error.");
 	return (0);
 }    

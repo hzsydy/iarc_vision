@@ -1,0 +1,9 @@
+<launch>
+    <include file="$(find iarc_realsense)/launch/iarc_raelsense.launch"/>
+    <node pkg="iarc_recog_track" type="getSheepPos" name="getSheepPos" output="screen">
+        <remap from="colorimage" to="iarc/realsense/color"/>
+    </node>
+    <node pkg="iarc_recog_track" type="trackSheepPos" name="trackSheepPos" output="screen">
+        <remap from="colorimage" to="iarc/realsense/color"/>
+    </node>
+</launch>
