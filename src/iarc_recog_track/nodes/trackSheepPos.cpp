@@ -119,10 +119,10 @@ int main(int argc, char **argv)
     
     ros::Subscriber sub1 = nn.subscribe("Point_lefttop", 1, pointCallback1);
     ros::Subscriber sub2 = nn.subscribe("Point_rightbottom", 1, pointCallback2);
-    image_transport::Subscriber subI = it.subscribe("fuck", 1, imageCallback);
+    image_transport::Subscriber subI = it.subscribe("/iarc/realsense/color", 1, imageCallback);
             
     ros::Rate loop_rate(10);
-    for(;;){
+    for(;ros::ok();){
         //webcam >>img;
         
             
@@ -160,8 +160,6 @@ int main(int argc, char **argv)
                 chatter_pub.publish(pt);
                 sensor_msgs::ImagePtr imgmsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img_k).toImageMsg();
                 img_pub.publish(imgmsg);
-                //ros::spinOnce();
-                loop_rate.sleep();
             }
             
             delete bb;

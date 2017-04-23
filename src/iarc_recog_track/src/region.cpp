@@ -1,3 +1,4 @@
+
 ///////////////////////////////////////////////////////////
 //  region.cpp
 //  Implementation of the Class BBox
@@ -188,5 +189,3 @@ std::vector<BBox *> BBox::findDiff(std::vector<BBox *> & A, std::vector<BBox *> 
 
     return (ret);
 }
-
-

@@ -124,7 +124,7 @@ catkin_package(
 # )
 
 link_directories ( 
-	${OpenCV_LIB_DIR}
+  ${OpenCV_LIB_DIR}
  )
 
 include_directories ( 
@@ -141,33 +141,33 @@ SET(SRC_FILE
 
 add_executable(trackSheepPos nodes/trackSheepPos.cpp ${SRC_FILE})
 target_link_libraries(trackSheepPos 
-	${catkin_LIBRARIES}
-	${OpenCV_LIBS}
-	)
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+  )
 
 
 add_executable(getSheepPos nodes/getSheepPos.cpp ${SRC_FILE})
 target_link_libraries(getSheepPos 
-	${catkin_LIBRARIES}
-	${OpenCV_LIBS} 
-	)
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS} 
+  )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(iarc_recog_track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(iarc_recog_track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(iarc_recog_track_node src/iarc_recog_track_node.cpp)
+#add_executable(iarc_recog_track_node src/iarc_recog_track_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(iarc_recog_track_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(iarc_recog_track_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(iarc_recog_track_node
-#   ${catkin_LIBRARIES}
-# )
+#target_link_libraries(iarc_recog_track_node
+#  ${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##
