@@ -145,7 +145,7 @@ private:
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "trackSheepPos");
+	ros::init(argc, argv, "getSheepPos");
     ros::NodeHandle nn;
     ImageMatcher im(nn);
 	ros::spin();
