@@ -23,7 +23,7 @@ public:
         img_pub = it.advertise("/iarc/sheep/timg",1);
         sub1 = nn.subscribe("Point_lefttop", 1, &ImageTracker::pointCallback1, this);
         sub2 = nn.subscribe("Point_rightbottom", 1, &ImageTracker::pointCallback2, this);
-        subI = it.subscribe("/iarc/realsense/color", 1, &ImageTracker::imageCallback, this);
+        subI = it.subscribe("color", 1, &ImageTracker::imageCallback, this);
         t_topLeft = cv::Point(0,0);
         t_botRight = cv::Point(0,0);
         g_trackerInitialized = false;
@@ -53,7 +53,7 @@ public:
             cv_ptr = cv_bridge::toCvCopy(original_image, enc::BGR8);    
         }    
         catch (cv_bridge::Exception& e) {    
-            ROS_ERROR("tutorialROSOpenCV::main.cpp::cv_bridge exception: %s", e.what());    
+            ROS_ERROR("cv_bridge exception: %s", e.what());    
             exit(-1);    
         } 
         ROS_INFO("Get Next Picture.");  

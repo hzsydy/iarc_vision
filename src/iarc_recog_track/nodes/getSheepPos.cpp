@@ -24,7 +24,7 @@ public:
     	img_pub = it.advertise("/iarc/sheep/delay_img",1);
 		pub_lefttop = nn.advertise<geometry_msgs::Point>("Point_lefttop", 20);
 		pub_rightbottom = nn.advertise<geometry_msgs::Point>("Point_rightbottom", 20);
-    	subI = it.subscribe("/iarc/realsense/color", 1, &ImageMatcher::imageCallback, this);
+    	subI = it.subscribe("color", 1, &ImageMatcher::imageCallback, this);
 
     }
 	void imageCallback(const sensor_msgs::ImageConstPtr& original_image) {    
@@ -122,7 +122,7 @@ public:
 						pub_lefttop.publish(lefttop);
 						pub_rightbottom.publish(rightbottom);
 						img_pub.publish(Imsg);
-						ROS_INFO("Get Pos Once");
+						//ROS_INFO("Get Pos Once");
 						//cv::rectangle(image, Point2i(le, to), Point2i(ri, bo), Scalar(255, 0, 0), 2);
 					}
 				}
