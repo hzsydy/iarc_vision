@@ -48,11 +48,10 @@ FIND_PACKAGE( OpenCV REQUIRED )
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+ add_message_files(
+   FILES
+   my_Point.msg
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +68,10 @@ FIND_PACKAGE( OpenCV REQUIRED )
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs  # Or other packages containing msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,7 +105,7 @@ FIND_PACKAGE( OpenCV REQUIRED )
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES iarc_realsense
-  CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation
+  CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation message_runtime
   DEPENDS system_lib boost opencv
 )
 

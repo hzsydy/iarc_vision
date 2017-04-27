@@ -9,7 +9,7 @@
     <node pkg="iarc_recog_track" type="getSheepPos" name="getSheepPos" output="screen">
         <remap from="color" to="camera/color/image_raw"/>
     </node>
-    <node pkg="iarc_fsm" type="main_logic" name="main_logic" output="screen">
+    <!--<node pkg="iarc_fsm" type="main_logic" name="main_logic" output="screen">
         <remap from="planePos" to="iarc/sheep/center"/>
-    </node>
+    </node>-->
 </launch>

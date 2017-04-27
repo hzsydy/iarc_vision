@@ -7,13 +7,18 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream> 
 #include <cstring>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include "iarc_recog_track/my_Point.h"
 using namespace std;
 using namespace cv;
 namespace enc = sensor_msgs::image_encodings; 
 
-const int MAXINTERVAL = 2;
+const int MAXINTERVAL = 10;
 const int MAXBLOCK = 300;
-const int MINBLOCK = 10;
+const int MINBLOCK = 30;
+const int MAXQUEUE = 50000;
 
 class ImageMatcher 
 {
@@ -22,10 +27,9 @@ public:
     {
         image_transport::ImageTransport it(nn); 
     	img_pub = it.advertise("/iarc/sheep/delay_img",1);
-		pub_lefttop = nn.advertise<geometry_msgs::Point>("Point_lefttop", 20);
-		pub_rightbottom = nn.advertise<geometry_msgs::Point>("Point_rightbottom", 20);
+		pub_Point = nn.advertise<iarc_recog_track::my_Point>("my_Point", 1);
     	subI = it.subscribe("color", 1, &ImageMatcher::imageCallback, this);
-
+    	order = 0;
     }
 	void imageCallback(const sensor_msgs::ImageConstPtr& original_image) {    
     	cv_bridge::CvImagePtr cv_ptr;    
@@ -35,16 +39,28 @@ public:
     	catch (cv_bridge::Exception& e) {    
        	 	ROS_ERROR("ROSOpenCV::getSheepPos.cpp::cv_bridge exception: %s", e.what());    
         	exit(-1);    
-    	}	 
-    	ROS_INFO("Get Next Picture.");
+    	}
     	cv::Mat tmp = cv_bridge::toCvShare(original_image, "bgr8")->image;
-    	if (tmp.rows == 0 || tmp.cols == 0) return;
+    	if (tmp.rows == 0 || tmp.cols == 0) {
+    		ROS_INFO("Shit,the image is fake!");
+    		return;}
     	Mat image = tmp.clone();
     	trackonce(image);
 	}
+	string Int_to_String(int n)
+	{
+		ostringstream stream;
+		stream<<n;  //n为int类型
+		return stream.str();
+	}
+
 	void trackonce(Mat &image)
 	{
+
 		int s, t;
+		string gg = "/tmp/oo/"+Int_to_String(order)+".jpg";
+		imwrite (gg, image);
+		order = order + 1;
 		Mat blank = image.clone();
 		Mat sk = image.clone();
 		Mat hsvimage;
@@ -97,6 +113,7 @@ public:
 										sk.at<Vec3b>(ii + pt, jj + qt).val[1] = 1;
 										sk.at<Vec3b>(ii + pt, jj + qt).val[2] = 1;
 										++t;
+										if (t >= MAXQUEUE - 1) return;
 										q1[t] = ii + pt;
 										q2[t] = jj + qt;
 										++num;
@@ -109,31 +126,27 @@ public:
 					}
 					if (num >= MINBLOCK && num <= MAXBLOCK)
 					{
-						geometry_msgs::Point lefttop;
-						lefttop.x = le;
-						lefttop.y = to;
-						lefttop.z = 1;
-						geometry_msgs::Point rightbottom;
-						rightbottom.x = ri;
-						rightbottom.y = bo;
-						rightbottom.z = 1.0;
+						//ROS_INFO("Get a Sheep");
+						iarc_recog_track::my_Point mp;
+						mp.mle = le;
+						mp.mto = to;
+						mp.mri = ri;
+						mp.mbo = bo;
 						sensor_msgs::ImagePtr Imsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
-
-						pub_lefttop.publish(lefttop);
-						pub_rightbottom.publish(rightbottom);
 						img_pub.publish(Imsg);
-						//ROS_INFO("Get Pos Once");
+						pub_Point.publish(mp);
+						return;
+						////ROS_INFO("Get Pos Once");
 						//cv::rectangle(image, Point2i(le, to), Point2i(ri, bo), Scalar(255, 0, 0), 2);
 					}
 				}
 	}
 private:
 	image_transport::Publisher img_pub;
-	ros::Publisher pub_lefttop;
-	ros::Publisher pub_rightbottom;
+	ros::Publisher pub_Point;
 	image_transport::Subscriber subI;
-	int q1[50000], q2[50000];
-
+	int q1[MAXQUEUE], q2[MAXQUEUE];
+	int order;
 	bool checkRed(Mat a, int i, int j)
 	{	
 		if (((int)a.at<Vec3b>(i, j).val[0] <= 12.5 || (int)a.at<Vec3b>(i, j).val[0] >= 167.5) && (int)a.at<Vec3b>(i, j).val[1] >= 77)
