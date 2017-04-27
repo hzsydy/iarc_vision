@@ -1,11 +1,13 @@
 #ifndef COLOTRACKER_H
 #define COLOTRACKER_H
 
-#include "cv.h"
-#include "highgui.h"
+#include "opencv2/opencv.hpp"  
 #include "region.h"
 #include "histogram.h"
 #include <iostream>
+#include "opencv2/core/core.hpp"  
+#include "cv_bridge/cv_bridge.h"
+#include "opencv2/highgui/highgui.hpp"
 
 
 //#define SHOWDEBUGWIN
@@ -14,6 +16,7 @@
 #define BIN_2 16
 #define BIN_3 16
 
+using namespace cv;
 class ColorTracker
 {
 private:

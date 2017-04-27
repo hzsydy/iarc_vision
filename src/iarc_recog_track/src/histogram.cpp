@@ -133,4 +133,3 @@ void Histogram::addExpHist(double alpha, Histogram & hist)
         data[i] = beta*data[i] + alpha*hist.data[i];
     }
 }
-

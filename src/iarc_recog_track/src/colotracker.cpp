@@ -14,7 +14,6 @@ void ColorTracker::init(cv::Mat & img, int x1, int y1, int x2, int y2)
     y2 = std::min(img.rows-1, y2);
     x1 = std::max(0, x1);
     x2 = std::min(img.cols-1, x2);
-
     preprocessImage(img);
 
     extractForegroundHistogram(x1, y1, x2, y2, q_hist);
@@ -32,7 +31,6 @@ void ColorTracker::init(cv::Mat & img, int x1, int y1, int x2, int y2)
     defaultHeight = y2-y1;
     sumIter = 0;
     frame = 0;
-
 
     double w2 = (x2-x1)/2.;
     double h2 = (y2-y1)/2.;

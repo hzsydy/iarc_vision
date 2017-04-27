@@ -48,11 +48,10 @@ FIND_PACKAGE( OpenCV REQUIRED )
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+ add_message_files(
+   FILES
+   my_Point.msg
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +68,10 @@ FIND_PACKAGE( OpenCV REQUIRED )
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs  # Or other packages containing msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,7 +105,7 @@ FIND_PACKAGE( OpenCV REQUIRED )
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES iarc_realsense
-  CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation
+  CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation message_runtime
   DEPENDS system_lib boost opencv
 )
 
@@ -124,7 +123,7 @@ catkin_package(
 # )
 
 link_directories ( 
-	${OpenCV_LIB_DIR}
+  ${OpenCV_LIB_DIR}
  )
 
 include_directories ( 
@@ -141,33 +140,33 @@ SET(SRC_FILE
 
 add_executable(trackSheepPos nodes/trackSheepPos.cpp ${SRC_FILE})
 target_link_libraries(trackSheepPos 
-	${catkin_LIBRARIES}
-	${OpenCV_LIBS}
-	)
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+  )
 
 
 add_executable(getSheepPos nodes/getSheepPos.cpp ${SRC_FILE})
 target_link_libraries(getSheepPos 
-	${catkin_LIBRARIES}
-	${OpenCV_LIBS} 
-	)
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS} 
+  )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(iarc_recog_track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(iarc_recog_track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(iarc_recog_track_node src/iarc_recog_track_node.cpp)
+#add_executable(iarc_recog_track_node src/iarc_recog_track_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(iarc_recog_track_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(iarc_recog_track_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(iarc_recog_track_node
-#   ${catkin_LIBRARIES}
-# )
+#target_link_libraries(iarc_recog_track_node
+#  ${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##
