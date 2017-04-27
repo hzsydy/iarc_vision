@@ -10,7 +10,7 @@
 #include "region.h"
 #include <string>
 #include "iarc_recog_track/my_Point.h"
-#include <boost/thread/mutex.hpp>
+//#include <boost/thread/mutex.hpp>
 using namespace cv;
 namespace enc = sensor_msgs::image_encodings; 
 
@@ -29,7 +29,7 @@ public:
     }
     void pointCallback(const iarc_recog_track::my_Point::ConstPtr& msg)
     {
-        boost::mutex::scoped_lock lock_(mutex_);
+        //boost::mutex::scoped_lock lock_(mutex_);
         ROS_INFO("Hearing my_Point :%lf, %lf, %lf, %lf",msg->mle,msg->mto, msg->mri, msg->mbo);
         Mat img_t = img.clone();
         g_tracker.init(img_t, msg->mle,msg->mto, msg->mri, msg->mbo);
@@ -37,7 +37,7 @@ public:
     }
     void delay_imgCallback(const sensor_msgs::ImageConstPtr& original_image)
     {
-        boost::mutex::scoped_lock lock_(mutex_);
+        //boost::mutex::scoped_lock lock_(mutex_);
         cv_bridge::CvImagePtr cv_ptr;    
             try{
             cv_ptr = cv_bridge::toCvCopy(original_image, enc::BGR8);    
@@ -53,7 +53,7 @@ public:
     }
     void imageCallback(const sensor_msgs::ImageConstPtr& original_image) 
     {    
-        boost::mutex::scoped_lock lock_(mutex_);
+        //boost::mutex::scoped_lock lock_(mutex_);
         cv_bridge::CvImagePtr cv_ptr;    
             try{
             cv_ptr = cv_bridge::toCvCopy(original_image, enc::BGR8);    
@@ -98,7 +98,7 @@ private:
     cv::Point *PointList;
     BBox *bb = NULL;
 
-    boost::mutex mutex_;
+    //boost::mutex mutex_;
 };
 
 
