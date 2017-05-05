@@ -9,9 +9,14 @@ project(iarc_fsm)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  image_transport
+  cv_bridge
+  sensor_msgs
   roscpp
   rospy
 )
+
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -118,9 +123,14 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
   include
   src
 )
+
+link_directories ( 
+  ${OpenCV_LIB_DIR}
+ )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -143,6 +153,9 @@ add_subdirectory(src)
 
 add_executable(main_logic main.cpp)
 target_link_libraries(main_logic ${catkin_LIBRARIES} FSM)
+
+add_executable(webcam src/webcam_capture.cpp)
+target_link_libraries(webcam ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
