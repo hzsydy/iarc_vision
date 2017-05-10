@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     image_transport::ImageTransport it(n);
     image_transport::Publisher pub = it.advertise("/camera/color/image_raw",1);
 
-    VideoCapture capture(1);
+    VideoCapture capture(0);
     if (!capture.isOpened())
     {
         ROS_INFO("Webcam doesn't open.\n");

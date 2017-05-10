@@ -9,6 +9,7 @@ project(iarc_fsm)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  mavros
   image_transport
   cv_bridge
   sensor_msgs
