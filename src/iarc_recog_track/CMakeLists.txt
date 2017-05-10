@@ -70,7 +70,8 @@ FIND_PACKAGE( OpenCV REQUIRED )
 ## Generate added messages and services with any dependencies listed here
  generate_messages(
    DEPENDENCIES
-   std_msgs  # Or other packages containing msgs
+   std_msgs
+    # Or other packages containing msgs
  )
 
 ################################################
@@ -103,9 +104,9 @@ FIND_PACKAGE( OpenCV REQUIRED )
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+   CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation message_runtime
   INCLUDE_DIRS include
   LIBRARIES iarc_realsense
-  CATKIN_DEPENDS image_transport cv_bridge sensor_msgs roscpp rospy tf message_generation message_runtime
   DEPENDS system_lib boost opencv
 )
 
@@ -138,18 +139,22 @@ SET(SRC_FILE
     src/region.cpp
 )
 
+add_executable(getSheepPos nodes/getSheepPos.cpp ${SRC_FILE})
+add_dependencies(getSheepPos iarc_recog_track_generate_messages_cpp)
+target_link_libraries(getSheepPos 
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS} 
+  )
+
 add_executable(trackSheepPos nodes/trackSheepPos.cpp ${SRC_FILE})
+add_dependencies(trackSheepPos iarc_recog_track_generate_messages_cpp)
 target_link_libraries(trackSheepPos 
   ${catkin_LIBRARIES}
   ${OpenCV_LIBS}
   )
 
 
-add_executable(getSheepPos nodes/getSheepPos.cpp ${SRC_FILE})
-target_link_libraries(getSheepPos 
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBS} 
-  )
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
