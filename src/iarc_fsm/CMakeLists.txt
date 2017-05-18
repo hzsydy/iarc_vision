@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(iarc_fsm)
 
+# SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
 
@@ -17,11 +19,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
-find_package(OpenCV REQUIRED)
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+
+find_package(OpenCV REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -131,15 +133,11 @@ include_directories(
 
 link_directories ( 
   ${OpenCV_LIB_DIR}
- )
-
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/iarc_FSM.cpp
-# )
+)
 
 SET(SRC_FILE
     ./src/FSM.cpp
+    ./src/ueyeopencv.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -154,10 +152,10 @@ SET(SRC_FILE
 
 
 add_executable(main_logic main.cpp ${SRC_FILE})
-target_link_libraries(main_logic ${catkin_LIBRARIES})
+target_link_libraries(main_logic ${catkin_LIBRARIES} ${OpenCV_LIBS} libueye_api.so)
 
-add_executable(webcam src/webcam_capture.cpp)
-target_link_libraries(webcam ${catkin_LIBRARIES} ${OpenCV_LIBS})
+add_executable(webcam ./src/webcam_capture.cpp ${SRC_FILE})
+target_link_libraries(webcam ${catkin_LIBRARIES} ${OpenCV_LIBS} libueye_api.so)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
