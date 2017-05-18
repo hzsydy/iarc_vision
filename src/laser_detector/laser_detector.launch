@@ -1,0 +1,12 @@
+<launch>
+    <arg name="laser_scan" default="/scan" />
+    <arg name="machine" default="localhost" />
+    <arg name="user" default="" />
+
+    <machine name="$(arg machine)" address="$(arg machine)" env-loader="$(optenv ROS_ENV_LOADER )" user="$(arg user)" default="true"/>
+    
+    <node pkg="laser_detector" type="laser" name="laser_detector" output="screen">
+        <param name="laser_scan" value="/scan" type="string"/>
+    </node>
+
+</launch> 
