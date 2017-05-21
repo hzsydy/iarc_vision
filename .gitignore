@@ -4,6 +4,8 @@ build
 devel
 install
 src/mavros
+src/hokuyo_node
+src/laser_detector
 
 Debug/
 Release/
